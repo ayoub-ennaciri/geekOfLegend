@@ -157,3 +157,36 @@
 // >     * Correct answer: `"man"`  
 // >     * User answer: `"the MeN"`  
 // >     * The answer is considered **correct**
+
+
+
+//! Programm
+
+// boss class
+
+class Boss
+{
+    static riddles = []
+    constructor(name, hp, attackPoints)
+    {
+        this.name = name
+        this.hp = hp
+        this.attackPoints = attackPoints
+    }
+    
+    static addreddle(riddle)
+    {
+        boss.riddles.push(riddle)
+    }
+}
+
+Boss.addreddle({name : "1", riddle : "Does not have an end or a start.\nwhat is it\n?", anwser : "circle"})
+Boss.addreddle({name : "2", riddle : "Has a kneck but no head.\nwhat is it?\n", anwser : "bottle"})
+Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere in the dark.\n", anwser : "darkness"})
+
+// todo : remove this later 
+console.log(boss.riddles)
+
+let Sauron = new Boss(Sauron, 100, 100)
+let Lilith = new Boss(Sauron, 100, 100)
+let Chronos = new Boss(Sauron, 100, 100)
