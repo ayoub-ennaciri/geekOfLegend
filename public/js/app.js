@@ -32,11 +32,11 @@
 // > * A number of attack points  
 
 // ### Boss Rules:
-// > * Once a boss reaches 20% of its HP, it will ask the player characters a riddle  
-// > * The riddle is chosen randomly from at least **3 riddles**  
-// > * The player has **3 attempts maximum** to answer  
-// > * If they fail → they die  
-// > * If they succeed → they defeat the boss  
+// * Once a boss reaches 20% of its HP, it will ask the player characters a riddle  
+// * The riddle is chosen randomly from at least **3 riddles**  
+// * The player has **3 attempts maximum** to answer  
+// * If they fail → they die  
+// * If they succeed → they defeat the boss  
 
 // ### Examples of traditional riddles:
 // > * Once spoken, I no longer exist. Who am I?  
@@ -120,21 +120,22 @@
 // ## Actions
 
 // ### Defense:
-// > * Reduces attack damage by half (`* 0.5`)  
-// > * Increases health  points by **2.5 times** (`* 2.5`)  
-// > * Increases the chance of being attacked by the boss by **2**
+//  * Reduces attack damage by half (`* 0.5`)  
+//  * Increases health  points by **2.5 times** (`* 2.5`)  
+// useless bc the boss will attack all of them each round regardless > * Increases the chance of being attacked by the boss by **2**
 
 // ### Attack:
-// > * Increases attack damage by **two-fifths** (`* 1.4`)  
-// > * Reduces health    points by **one quarter** (`* 0.75`)
+//  * Increases attack damage by **two-fifths** (`* 1.4`)  
+//  * Reduces health    points by **one quarter** (`* 0.75`)
 
 // ---
 
 // ## General Rules:
-// > * A boss is randomly chosen from the three  
-// > * You define the bosses’ statistics beforehand  
+//  * A boss is randomly chosen from the three  
+//  * You define the bosses’ statistics beforehand  
 // > * The user chooses the name of each hero  
-// > * You must set a total pool of health   points and attack points that the user must distribute among their heroes  
+// > * You must set a total pool of health   points and attack points that
+//     the user must distribute among their heroes  
 // >   (Make sure there is a lot of interaction)  
 // > * Before the fight begins, the user can choose a stance:
 // >   * `attack`
@@ -147,7 +148,7 @@
 // ---
 
 // ## Bonus:
-// > * For riddles, the user’s answer must:
+// >   * For riddles, the user’s answer must:
 // >   * Be converted to lowercase  
 // >   * Have all spaces removed  
 // >   * Example:
@@ -167,17 +168,61 @@
 class Boss
 {
     static riddles = []
+    static bosses = []
     constructor(name, hp, attackPoints)
     {
         this.name = name
         this.hp = hp
+        this.maxhp = hp
         this.attackPoints = attackPoints
+        this.status = "alive"
+        Boss.bosses.push(this)
     }
     
     static addreddle(riddle)
     {
-        boss.riddles.push(riddle)
+        Boss.riddles.push(riddle)
     }
+    static randomBoss () 
+    {
+        return Boss.bosses[Math.round((Math.random() * (Boss.bosses.length - 1))) ]
+    }
+    bossAttack(damage, heros)
+    {
+        const attackDamage = 20
+        // heros[Math.round((Math.random() * (heros.length - 1)))]
+        let i = 0 
+        while(i < heros.length){
+            if(heros[i],stat = "defense")
+            {
+                heros[i].hp -= (attackDamage * 0.5)
+            }
+            else 
+                heros[i].hp -= attackDamage 
+        }
+    }
+    bossReddilActive()
+    {
+        // if they defeat the boss return true else return false
+        let attemts = 3
+        if (this.hp <= this.maxhp * 0.2 )
+        {
+            let riddle = Boss.riddles[Math.round((Math.random() * (Boss.riddles.length - 1))) ]
+            while(attemts)
+            {
+                let anwser = prompt(riddle.riddle)
+                if (anwser == riddle.anwser)
+                {
+                    this.status = "dead"
+                }
+                attemts--
+            }
+            if(attemts == 0 && this.status == "alive")
+                return false
+            else return true
+        }
+    }
+
 }
 
 Boss.addreddle({name : "1", riddle : "Does not have an end or a start.\nwhat is it\n?", anwser : "circle"})
@@ -185,8 +230,34 @@ Boss.addreddle({name : "2", riddle : "Has a kneck but no head.\nwhat is it?\n", 
 Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere in the dark.\n", anwser : "darkness"})
 
 // todo : remove this later 
-console.log(boss.riddles)
+console.log(Boss.riddles)
 
-let Sauron = new Boss(Sauron, 100, 100)
-let Lilith = new Boss(Sauron, 100, 100)
-let Chronos = new Boss(Sauron, 100, 100)
+let Sauron = new Boss("Sauron", 100, 100)
+let Lilith = new Boss("Lilith", 100, 100)
+let Chronos = new Boss("Chronos", 100, 100)
+
+class Hero
+{
+    constructor(name, hp, attackPoints)
+    {
+        this.name = name
+        this.hp = hp
+        this.attackPoints = attackPoints
+        this.ragePoints = 0
+        this.stat = "normal"
+    }
+
+    defense ()
+    {
+        
+        this.hp *= 2.5
+
+    }
+    attack()
+    {
+        this.attackPoints *= 1.4
+        this.hp *= 0.75
+    }
+
+}
+
