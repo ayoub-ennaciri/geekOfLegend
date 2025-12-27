@@ -259,9 +259,9 @@ Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere 
 // todo : remove this later 
 console.log(Boss.riddles)
 // bosses
-let Sauron = new Boss("Sauron", 100, 100)
-let Lilith = new Boss("Lilith", 100, 100)
-let Chronos = new Boss("Chronos", 100, 100)
+let Sauron = new Boss("Sauron", 1000, 100)
+let Lilith = new Boss("Lilith", 1000, 100)
+let Chronos = new Boss("Chronos", 1000, 100)
 
 class Hero
 {
@@ -270,7 +270,7 @@ class Hero
     constructor(name, attackPoints)
     {
         this.name = name
-        this.hp = 0
+        this.hp = 100
         this.attackPoints = attackPoints
         this.ragePoints = 0
         this.type 
@@ -279,15 +279,7 @@ class Hero
     defense ()
     {
         this.hp *= 2.5
-        this.attack *= 0.5
-    }
-    attack(boss)
-    {
-        const damage = 10
-        boss.hp -= 10
-        this.stat = "attack"
-        this.attackPoints *= 1.4
-        this.hp *= 0.75
+        this.attackPoints *= 0.5
     }
 
 }
@@ -303,14 +295,22 @@ class Warrior extends Hero{
 
     attack(boss)
     {
-        const mult = 1
-        const useRage = 0
+        let mult = 1
+        let useRage = "no"
+        this.ragePoints++
         if(this.ragePoints >= 4)
-            useRage = prompt("you have 4 rage points do you want to rage\n(increas your attack damage by 0.25% this attack):") 
-        if(useRage != 0 && this.ragePoints >= 4)
+            useRage = prompt("you have 4 rage points do you want to rage ?\n(increas your attack damage by 0.25% this attack):") 
+
+        if((useRage == "y" || useRage == "yes") && this.ragePoints >= 4)
+        {
             mult = 1.25
+            this.ragePoints -= 4
+            useRage = 0
+        }
+
         this.attackPoints *= 1.4
         this.hp *= 0.75
+        console.log(this.name + " the warrior attacked");
         boss.hp -= this.attackPoints * mult
         console.log(boss.name + " -"+this.attackPoints * mult)
         mult = 1 
@@ -330,6 +330,8 @@ class Mage extends Hero{
     {
         if(this.mana >= 2)
         {
+            console.log(this.name+" the mage attacked");
+            this.hp *= 0.75
             boss.hp -= this.attackPoints
             console.log(boss.name + " -"+this.attackPoints)
             this.mana -=2
@@ -355,7 +357,9 @@ class Archer extends Hero{
     {
         if(this.NumOfArrows >= 2)
         {
-            this.NumOfArrows += 2
+            this.hp *= 0.75
+            console.log(this.name + " the archer attacked");
+            this.NumOfArrows -= 3
             boss.hp -= this.attackPoints
             console.log(boss.name + " -"+this.attackPoints)
             this.NumOfArrows += 1
@@ -380,7 +384,7 @@ console.table(Hero.heros)
 let boss = Boss.randomBoss()
 
 //the total hp pool
-const hpPool = 85
+let hpPool = 85
 
 // getting the names and hp of the heros
 let i = 0
@@ -396,25 +400,50 @@ let i = 0
 //         hpPool -= Hero.heros[i].hp
 //     i++
 // }
-
+console.table(Hero.heros)
 // sellection the stat of the fight
-// while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
-// {
-//     console.log("You are facing a monster :\n")
-//     let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
-//     if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
-//         Hero.stat = "attack"
-//     if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
-//         Hero.stat = "defense"
-//     if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
-//         Hero.stat = "normal"
-// }
-// console.table(Hero.stat)
+while(boss.stat != "dead"){
+while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
+{
+    console.log("You are facing a " +boss.name+ " the monster :\n")
+    let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
+    if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
+        Hero.stat = "attack"
+    if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
+        Hero.stat = "defense"
+    if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
+        Hero.stat = "normal"
+}
+console.table(Hero.stat)
 
-// // fight
+//! fight
 
+// each hero fight
+if(Hero.stat == "attack")
+{
+    i = 0
+    while(i <Hero.heros.length)
+    {
+        Hero.heros[i].attack(boss);
+        i++;
+    }
+} //else each hero defend
+else if(Hero.stat == "defense")
+{
+    i = 0
+    while(i <Hero.heros.length)
+    {
+        Hero.heros[i].defense();
+        i++;
+    }
+}
 
+// moster turn 
 
-console.table(boss)
-Hero.heros[1].attack(boss)
-console.table(boss)
+Hero.stat = ""
+if(boss.hp <= 0)
+    boss.stat ="dead"
+console.log(boss)
+console.table(Hero.heros)
+
+}
