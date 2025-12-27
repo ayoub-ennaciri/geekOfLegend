@@ -27,9 +27,9 @@
 // ## Three bosses (Sauron, Chronos, Lilith)
 
 // Each boss must have the following properties:
-// > * A name  
-// > * A number of health    points (HP)  
-// > * A number of attack points  
+//  * A name  
+//  * A number of health    points (HP)  
+//  * A number of attack points  
 
 // ### Boss Rules:
 // * Once a boss reaches 20% of its HP, it will ask the player characters a riddle  
@@ -60,10 +60,10 @@
 // ## The Warrior
 
 // ### Properties:
-// > * name  
-// > * health    points  
-// > * attack points  
-// > * rage points: `0`
+//  * name  
+//  * health    points  
+//  * attack points  
+//  * rage points: `0`
 
 // ### Actions:
 // > * defense  
@@ -79,7 +79,7 @@
 // ## The Mage
 
 // ### Properties:
-// > * name  
+// > * name   
 // > * health    points  
 // > * attack points  
 // > * mana points: randomly chosen from `7`, `9`, or `11`
@@ -102,7 +102,7 @@
 // > * name  
 // > * health    points  
 // > * attack points  
-// > * number of arrows: randomly chosen from `7`, `8`, `9`, `10`, or `11`
+// > * number of arrows: randsomly chosen from `7`, `8`, `9`, `10`, or `11`
 
 // ### Actions:
 // > * defense  
@@ -165,6 +165,33 @@
 
 // boss class
 
+
+/** 0 for even , 1 for odd, 2 for both  */
+    const randomNumberGen = (max ,min ,OddEvenBoth ) =>
+    {
+        let num = Math.floor(Math.random() *(max - min) + min)
+        if(num % 2 == 0 && Number(OddEvenBoth) == 1)
+        {
+            if(num == max)
+            {
+                num--
+            }
+            else 
+                num++
+        }
+        else if(num % 2 != 0 && Number(OddEvenBoth) == 0)
+        {
+            if(num == max)
+            {
+                num--
+            }
+            else 
+                num++
+        }
+        return num
+    }
+
+
 class Boss
 {
     static riddles = []
@@ -224,14 +251,14 @@ class Boss
     }
 
 }
-
+// riddles
 Boss.addreddle({name : "1", riddle : "Does not have an end or a start.\nwhat is it\n?", anwser : "circle"})
 Boss.addreddle({name : "2", riddle : "Has a kneck but no head.\nwhat is it?\n", anwser : "bottle"})
 Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere in the dark.\n", anwser : "darkness"})
 
 // todo : remove this later 
 console.log(Boss.riddles)
-
+// bosses
 let Sauron = new Boss("Sauron", 100, 100)
 let Lilith = new Boss("Lilith", 100, 100)
 let Chronos = new Boss("Chronos", 100, 100)
@@ -246,18 +273,37 @@ class Hero
         this.ragePoints = 0
         this.stat = "normal"
     }
-
+    
     defense ()
     {
-        
+        this.stat = "defense"
         this.hp *= 2.5
 
     }
     attack()
     {
+        this.stat = "attack"
         this.attackPoints *= 1.4
         this.hp *= 0.75
     }
 
 }
 
+class Warrior extends Hero{
+    constructor(name, hp, attackPoints){
+        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        this.ragePoints = 0
+    }
+}
+class Mage extends Hero{
+    constructor(name, hp, attackPoints){
+        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        this.mana = randomNumberGen(11,7,1)
+    }
+}
+class archer extends Hero{
+    constructor(name, hp, attackPoints){
+        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        this.NumOfArrows = randomNumberGen(11,7,2)
+    }
+}
