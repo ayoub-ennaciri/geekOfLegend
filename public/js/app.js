@@ -137,10 +137,10 @@
 //  * You must set a total pool of health   points and attack points that
 //  *  the user must distribute among their heroes  
 //  *   (Make sure there is a lot of interaction)  
-// > * Before the fight begins, the user can choose a stance:
-// >   * `attack`
-// >   * `defense`
-// >   * `normal` (no modifier)
+//  * Before the fight begins, the user can choose a stance:
+//    * `attack`
+//    * `defense`
+//    * `normal` (no modifier)
 // > * Each turn:
 // >   * The three heroes each attack the boss once  
 // >   * The boss attacks one hero at random  
@@ -278,12 +278,13 @@ class Hero
     
     defense ()
     {
-        this.stat = "defense"
         this.hp *= 2.5
-
+        this.attack *= 0.5
     }
-    attack()
+    attack(boss)
     {
+        const damage = 10
+        boss.hp -= 10
         this.stat = "attack"
         this.attackPoints *= 1.4
         this.hp *= 0.75
@@ -292,27 +293,79 @@ class Hero
 }
 
 class Warrior extends Hero{
-    constructor(name, hp, attackPoints){
-        super(name, hp, attackPoints  )
+    constructor(name ){
+        super(name, 10  )
         this.ragePoints = 0
         this.type = "warrior"
+        this.bonus = 1.25
         Hero.heros.push(this)
     }
+
+    attack(boss)
+    {
+        const mult = 1
+        const useRage = 0
+        if(this.ragePoints >= 4)
+            useRage = prompt("you have 4 rage points do you want to rage\n(increas your attack damage by 0.25% this attack):") 
+        if(useRage != 0 && this.ragePoints >= 4)
+            mult = 1.25
+        this.attackPoints *= 1.4
+        this.hp *= 0.75
+        boss.hp -= this.attackPoints * mult
+        console.log(boss.name + " -"+this.attackPoints * mult)
+        mult = 1 
+    }
 }
+
+
 class Mage extends Hero{
-    constructor(name, hp, attackPoints){
-        super(name, hp, attackPoints  )
+    constructor(name ){
+        super(name,  20  )
         this.mana = randomNumberGen(11,7,1)
         this.type = "mage"
         Hero.heros.push(this)
     }
+
+    attack(boss)
+    {
+        if(this.mana >= 2)
+        {
+            boss.hp -= this.attackPoints
+            console.log(boss.name + " -"+this.attackPoints)
+            this.mana -=2
+        }
+        else
+        {
+            console.log(boss.name + " -"+this.attackPoints)
+            console.log("not enough mana \nyou get 7 mana points ");
+            this.mana += 7
+        }
+    }
 }
 class Archer extends Hero{
-    constructor(name, hp, attackPoints){
-        super(name, hp, attackPoints  )
+    constructor(name  ){
+        super(name,   15)
         this.NumOfArrows = randomNumberGen(11,7,2)
         this.type = "archer"
         Hero.heros.push(this)
+    }
+
+
+    attack(boss)
+    {
+        if(this.NumOfArrows >= 2)
+        {
+            this.NumOfArrows += 2
+            boss.hp -= this.attackPoints
+            console.log(boss.name + " -"+this.attackPoints)
+            this.NumOfArrows += 1
+        }
+        else
+        {
+            console.log(boss.name + " -"+this.attackPoints)
+            console.log("not enough arrows \nyou get 7 arrows ");
+            this.NumOfArrows += 6
+        }
     }
 }
 
@@ -344,15 +397,24 @@ let i = 0
 //     i++
 // }
 
-while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
-{
-    console.log("You are facing a monster :\n")
-    let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
-    if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
-        Hero.stat = "attack"
-    if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
-        Hero.stat = "defense"
-    if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
-        Hero.stat = "normal"
-}
-console.table(Hero.stat)
+// sellection the stat of the fight
+// while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
+// {
+//     console.log("You are facing a monster :\n")
+//     let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
+//     if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
+//         Hero.stat = "attack"
+//     if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
+//         Hero.stat = "defense"
+//     if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
+//         Hero.stat = "normal"
+// }
+// console.table(Hero.stat)
+
+// // fight
+
+
+
+console.table(boss)
+Hero.heros[1].attack(boss)
+console.table(boss)
