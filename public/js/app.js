@@ -265,12 +265,14 @@ let Chronos = new Boss("Chronos", 100, 100)
 
 class Hero
 {
-    constructor(name, hp, attackPoints)
+    static heros = []
+    constructor(name, attackPoints)
     {
         this.name = name
-        this.hp = hp
+        this.hp = 0
         this.attackPoints = attackPoints
         this.ragePoints = 0
+        this.type 
         this.stat = "normal"
     }
     
@@ -291,19 +293,53 @@ class Hero
 
 class Warrior extends Hero{
     constructor(name, hp, attackPoints){
-        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        super(name, hp, attackPoints  )
         this.ragePoints = 0
+        this.type = "warrior"
+        Hero.heros.push(this)
     }
 }
 class Mage extends Hero{
     constructor(name, hp, attackPoints){
-        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        super(name, hp, attackPoints  )
         this.mana = randomNumberGen(11,7,1)
+        this.type = "mage"
+        Hero.heros.push(this)
     }
 }
-class archer extends Hero{
+class Archer extends Hero{
     constructor(name, hp, attackPoints){
-        super(this.name = name, this.hp = hp, this.attackPoints = attackPoints )
+        super(name, hp, attackPoints  )
         this.NumOfArrows = randomNumberGen(11,7,2)
+        this.type = "archer"
+        Hero.heros.push(this)
     }
+}
+
+new Warrior
+new Mage 
+new Archer
+
+console.table(Hero.heros)
+// !the game start 
+
+// get a random boss
+let boss = Boss.randomBoss()
+
+//the total hp pool
+const hpPool = 85
+
+// getting the names and hp of the heros
+let i = 0
+while(i < Hero.heros.length)
+{
+    if(i == Hero.heros.length -1)
+            Hero.heros[i].hp = hpPool
+    while(Hero.heros[i].name == undefined || Hero.heros[i].name == "")
+        Hero.heros[i].name = prompt("Enter a valid name for your " + Hero.heros[i].type).trim()
+    while(Hero.heros[i].hp  <= 0 || isNaN(Hero.heros[i].hp)   ||Hero.heros[i].hp  > hpPool  || Hero.heros[i].hp == "")
+        Hero.heros[i].hp = Number(prompt("You have a pool of " + hpPool +"hp \nSet the heath of your " + Hero.heros[i].type).trim())
+    if(Hero.heros[i].hp)
+        hpPool -= Hero.heros[i].hp
+    i++
 }
