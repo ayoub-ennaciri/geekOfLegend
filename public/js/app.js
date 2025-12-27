@@ -133,10 +133,10 @@
 // ## General Rules:
 //  * A boss is randomly chosen from the three  
 //  * You define the bosses’ statistics beforehand  
-// > * The user chooses the name of each hero  
-// > * You must set a total pool of health   points and attack points that
-//     the user must distribute among their heroes  
-// >   (Make sure there is a lot of interaction)  
+//  * The user chooses the name of each hero  
+//  * You must set a total pool of health   points and attack points that
+//  *  the user must distribute among their heroes  
+//  *   (Make sure there is a lot of interaction)  
 // > * Before the fight begins, the user can choose a stance:
 // >   * `attack`
 // >   * `defense`
@@ -266,6 +266,7 @@ let Chronos = new Boss("Chronos", 100, 100)
 class Hero
 {
     static heros = []
+    static stat = ""
     constructor(name, attackPoints)
     {
         this.name = name
@@ -273,7 +274,6 @@ class Hero
         this.attackPoints = attackPoints
         this.ragePoints = 0
         this.type 
-        this.stat = "normal"
     }
     
     defense ()
@@ -331,15 +331,28 @@ const hpPool = 85
 
 // getting the names and hp of the heros
 let i = 0
-while(i < Hero.heros.length)
+// while(i < Hero.heros.length)
+// {
+//     if(i == Hero.heros.length -1)
+//             Hero.heros[i].hp = hpPool
+//     while(Hero.heros[i].name == undefined || Hero.heros[i].name == "")
+//         Hero.heros[i].name = prompt("Enter a valid name for your " + Hero.heros[i].type).trim()
+//     while(Hero.heros[i].hp  <= 0 || isNaN(Hero.heros[i].hp)   ||Hero.heros[i].hp  > hpPool  || Hero.heros[i].hp == "")
+//         Hero.heros[i].hp = Number(prompt("You have a pool of " + hpPool +"hp \nSet the heath of your " + Hero.heros[i].type).trim())
+//     if(Hero.heros[i].hp)
+//         hpPool -= Hero.heros[i].hp
+//     i++
+// }
+
+while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
 {
-    if(i == Hero.heros.length -1)
-            Hero.heros[i].hp = hpPool
-    while(Hero.heros[i].name == undefined || Hero.heros[i].name == "")
-        Hero.heros[i].name = prompt("Enter a valid name for your " + Hero.heros[i].type).trim()
-    while(Hero.heros[i].hp  <= 0 || isNaN(Hero.heros[i].hp)   ||Hero.heros[i].hp  > hpPool  || Hero.heros[i].hp == "")
-        Hero.heros[i].hp = Number(prompt("You have a pool of " + hpPool +"hp \nSet the heath of your " + Hero.heros[i].type).trim())
-    if(Hero.heros[i].hp)
-        hpPool -= Hero.heros[i].hp
-    i++
+    console.log("You are facing a monster :\n")
+    let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
+    if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
+        Hero.stat = "attack"
+    if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
+        Hero.stat = "defense"
+    if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
+        Hero.stat = "normal"
 }
+console.table(Hero.stat)
