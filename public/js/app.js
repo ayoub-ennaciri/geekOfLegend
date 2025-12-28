@@ -122,7 +122,7 @@
 // ### Defense:
 //  * Reduces attack damage by half (`* 0.5`)  
 //  * Increases health  points by **2.5 times** (`* 2.5`)  
-// useless bc the boss will attack all of them each round regardless > * Increases the chance of being attacked by the boss by **2**
+//> * Increases the chance of being attacked by the boss by **2**
 
 // ### Attack:
 //  * Increases attack damage by **two-fifths** (`* 1.4`)  
@@ -191,6 +191,33 @@
         return num
     }
 
+    function weightedRandom(values, weights) {
+        console.log(values);
+        console.log(weights);
+        
+        
+  const total = weights.reduce((a, b) => a + b, 0);
+  let rand = Math.random() * total;
+
+  for (let i = 0; i < values.length; i++) {
+    rand -= weights[i];
+    if (rand <= 0){console.log(values[i])
+         return values[i]};
+  }
+}
+
+// Dynamic weights
+const values = [1, 2, 3];
+
+// Change this anytime
+const weights = [
+  1,  // chance for 1
+  1,  // chance for 2
+  1   // chance for 3 
+];
+
+console.log(weightedRandom(values, weights));
+
 
 class Boss
 {
@@ -214,19 +241,20 @@ class Boss
     {
         return Boss.bosses[Math.round((Math.random() * (Boss.bosses.length - 1))) ]
     }
-    bossAttack(damage, heros)
+    bossAttack( heros)
     {
-        const attackDamage = 20
-        // heros[Math.round((Math.random() * (heros.length - 1)))]
-        let i = 0 
+        let herosIndexes = []
+        let chanceIndex = []
+        let i = 0
         while(i < heros.length){
-            if(heros[i],stat = "defense")
-            {
-                heros[i].hp -= (attackDamage * 0.5)
-            }
-            else 
-                heros[i].hp -= attackDamage 
+            herosIndexes.push(i)
+            chanceIndex.push(heros[i].chance)
+            i++
         }
+        const poorSoul = weightedRandom(herosIndexes,chanceIndex)
+        console.log(poorSoul)
+        console.log(heros[poorSoul].type + " will be attacked")
+        heros[poorSoul].hp -= this.attackPoints
     }
     bossReddilActive()
     {
@@ -259,27 +287,31 @@ Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere 
 // todo : remove this later 
 console.log(Boss.riddles)
 // bosses
-let Sauron = new Boss("Sauron", 1000, 100)
-let Lilith = new Boss("Lilith", 1000, 100)
-let Chronos = new Boss("Chronos", 1000, 100)
+let Sauron = new Boss("Sauron", 1000, 30)
+let Lilith = new Boss("Lilith", 1000, 30)
+let Chronos = new Boss("Chronos", 1000, 30)
 
 class Hero
 {
     static heros = []
     static stat = ""
+
     constructor(name, attackPoints)
     {
+        this.chance = 1
         this.name = name
         this.hp = 100
         this.attackPoints = attackPoints
         this.ragePoints = 0
-        this.type 
+        this.type
+        this.status = "alive"
     }
     
     defense ()
     {
         this.hp *= 2.5
         this.attackPoints *= 0.5
+        this.chance += 2
     }
 
 }
@@ -438,7 +470,9 @@ else if(Hero.stat == "defense")
     }
 }
 
-// moster turn 
+// boss turn 
+
+boss.bossAttack(Hero.heros)
 
 Hero.stat = ""
 if(boss.hp <= 0)
