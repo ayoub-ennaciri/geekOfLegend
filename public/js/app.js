@@ -191,19 +191,16 @@
         return num
     }
 
-    function weightedRandom(values, weights) {
-        console.log(values);
-        console.log(weights);
-        
-        
-  const total = weights.reduce((a, b) => a + b, 0);
-  let rand = Math.random() * total;
-
-  for (let i = 0; i < values.length; i++) {
-    rand -= weights[i];
-    if (rand <= 0){console.log(values[i])
-         return values[i]};
-  }
+function weightedRandom(values, weights)
+{
+    const total = weights.reduce((a, b) => a + b, 0);
+    let rand = Math.random() * total;
+    for (let i = 0; i < values.length; i++)
+    {
+        rand -= weights[i];
+        if (rand <= 0)
+            return values[i]
+    }
 }
 
 // Dynamic weights
@@ -216,7 +213,7 @@ const weights = [
   1   // chance for 3 
 ];
 
-console.log(weightedRandom(values, weights));
+
 
 
 class Boss
@@ -246,24 +243,38 @@ class Boss
         let herosIndexes = []
         let chanceIndex = []
         let i = 0
-        while(i < heros.length){
-            herosIndexes.push(i)
-            chanceIndex.push(heros[i].chance)
-            i++
+        
+        heros.forEach((obj, index) => 
+            {
+                if (obj.status == "alive") 
+                {
+                    herosIndexes.push(index);
+                    chanceIndex.push(heros[index].chance)
+                    
+                }
+            }
+        );
+        // attack only alive players 
+        let poorSoul ={status : "dead"}
+        while(poorSoul.status == "dead")
+        {
+            poorSoul = weightedRandom(herosIndexes,chanceIndex)
         }
-        const poorSoul = weightedRandom(herosIndexes,chanceIndex)
-        console.log(poorSoul)
-        console.log(heros[poorSoul].type + " will be attacked")
+        console.log(heros[poorSoul].name +" the "+heros[poorSoul].type + " will be attacked")
         heros[poorSoul].hp -= this.attackPoints
+        console.log(heros[poorSoul].type +" "+ heros[poorSoul].name,+" recived damage : " + String(- this.attackPoints))
+        if(heros[poorSoul].hp <= 0){
+            heros[poorSoul].status = "dead"
+            console.log(heros[poorSoul].name +" the "+ heros[poorSoul].type+" is dead" )
+        }
     }
     bossReddilActive()
     {
         // if they defeat the boss return true else return false
         let attemts = 3
-        if (this.hp <= this.maxhp * 0.2 )
-        {
+        
             let riddle = Boss.riddles[Math.round((Math.random() * (Boss.riddles.length - 1))) ]
-            while(attemts)
+            while(attemts && this.status == "alive")
             {
                 let anwser = prompt(riddle.riddle)
                 if (anwser == riddle.anwser)
@@ -275,7 +286,6 @@ class Boss
             if(attemts == 0 && this.status == "alive")
                 return false
             else return true
-        }
     }
 
 }
@@ -284,12 +294,10 @@ Boss.addreddle({name : "1", riddle : "Does not have an end or a start.\nwhat is 
 Boss.addreddle({name : "2", riddle : "Has a kneck but no head.\nwhat is it?\n", anwser : "bottle"})
 Boss.addreddle({name : "3", riddle : "What is the thing that you see everywhere in the dark.\n", anwser : "darkness"})
 
-// todo : remove this later 
-console.log(Boss.riddles)
 // bosses
-let Sauron = new Boss("Sauron", 1000, 30)
-let Lilith = new Boss("Lilith", 1000, 30)
-let Chronos = new Boss("Chronos", 1000, 30)
+let Sauron = new Boss("Sauron", 25, 100)
+let Lilith = new Boss("Lilith", 25, 100)
+let Chronos = new Boss("Chronos", 25, 100)
 
 class Hero
 {
@@ -305,6 +313,7 @@ class Hero
         this.ragePoints = 0
         this.type
         this.status = "alive"
+        this.stat = ""
     }
     
     defense ()
@@ -318,7 +327,7 @@ class Hero
 
 class Warrior extends Hero{
     constructor(name ){
-        super(name, 10  )
+        super(name, 5  )
         this.ragePoints = 0
         this.type = "warrior"
         this.bonus = 1.25
@@ -348,8 +357,6 @@ class Warrior extends Hero{
         mult = 1 
     }
 }
-
-
 class Mage extends Hero{
     constructor(name ){
         super(name,  20  )
@@ -409,7 +416,6 @@ new Warrior
 new Mage 
 new Archer
 
-console.table(Hero.heros)
 // !the game start 
 
 // get a random boss
@@ -418,66 +424,198 @@ let boss = Boss.randomBoss()
 //the total hp pool
 let hpPool = 85
 
-// getting the names and hp of the heros
+//* getting the names and hp of the heros
 let i = 0
-// while(i < Hero.heros.length)
-// {
-//     if(i == Hero.heros.length -1)
-//             Hero.heros[i].hp = hpPool
-//     while(Hero.heros[i].name == undefined || Hero.heros[i].name == "")
-//         Hero.heros[i].name = prompt("Enter a valid name for your " + Hero.heros[i].type).trim()
-//     while(Hero.heros[i].hp  <= 0 || isNaN(Hero.heros[i].hp)   ||Hero.heros[i].hp  > hpPool  || Hero.heros[i].hp == "")
-//         Hero.heros[i].hp = Number(prompt("You have a pool of " + hpPool +"hp \nSet the heath of your " + Hero.heros[i].type).trim())
-//     if(Hero.heros[i].hp)
-//         hpPool -= Hero.heros[i].hp
-//     i++
-// }
-console.table(Hero.heros)
+while(i < Hero.heros.length)
+{
+    if(i == Hero.heros.length -1)
+            Hero.heros[i].hp = hpPool
+    while(Hero.heros[i].name == undefined || Hero.heros[i].name == "")
+        Hero.heros[i].name = prompt("Enter a valid name for your " + Hero.heros[i].type).trim()
+    while(Hero.heros[i].hp  <= 0 || isNaN(Hero.heros[i].hp)   ||Hero.heros[i].hp  > hpPool  || Hero.heros[i].hp == "")
+        Hero.heros[i].hp = Number(prompt("You have a pool of " + hpPool +"hp \nSet the heath of your " + Hero.heros[i].type).trim())
+    if(Hero.heros[i].hp)
+        hpPool -= Hero.heros[i].hp
+    i++
+}
+i = 0
 // sellection the stat of the fight
-while(boss.stat != "dead"){
-while(!(Hero.stat == "attack" || Hero.stat == "defense" || Hero.stat == "normal"))
-{
-    console.log("You are facing a " +boss.name+ " the monster :\n")
-    let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
-    if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
-        Hero.stat = "attack"
-    if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
-        Hero.stat = "defense"
-    if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
-        Hero.stat = "normal"
-}
-console.table(Hero.stat)
+// while(boss.stat != "dead")
+// {
+//     while(i < Hero.heros.length && !(Hero.heros[i].stat == "attack" || Hero.heros[i].stat == "defense" || Hero.heros[i].stat == "normal"))
+//     {
+//         // choose the stat of the hero (attack,defense,nomal)
+//         console.log("You are facing a " +boss.name+ " the monster :\n")
+//         let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
+//         if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
+//             Hero.heros[i].stat = "attack"
+//         if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
+//             Hero.heros[i].stat = "defense"
+//         if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
+//             Hero.heros[i].stat = "normal"
 
-//! fight
+//         console.table(Hero.stat)
 
-// each hero fight
-if(Hero.stat == "attack")
+//         //! fight
+
+//         // depending on the hero.stat it activates an action (attack,defense,nothing )
+//         if(Hero.heros[i].status == "alive")
+//         {
+//             switch (Hero.heros[i].stat) {
+//                 case "attack":
+//                     Hero.heros[i].attack(boss);    
+//                     break;
+                
+//                 case "defense":
+//                     Hero.heros[i].defense();
+//                     break;
+
+//                 default:
+//                     console.log(Hero.heros[i].name + " did nothing")
+//                     break;
+//             }
+//         }
+//         else
+//         {
+//             console.log(Hero.heros[i].name + " is dead");
+//         }
+
+//         // boss turn
+//             if(i >= Hero.heros.length && boss.bossReddilActive())
+//             {
+//                 i = 0 
+//                 while(i < Hero.heros.length)
+//                 {
+//                     Hero.heros[i].status = "dead"
+//                     i++
+//                 }
+//             } 
+//             else if(Hero.heros[i].status == "alive")
+//                 boss.bossAttack(Hero.heros)
+        
+//         console.log("i : "+i)
+//         console.log(Hero.heros[i].stat)
+//         Hero.heros[i].stat = ""
+//         console.log(Hero.heros[i].stat)
+//         if(Hero.heros[i].hp <= 0)
+//             Hero.heros[i].status = "dead"
+//         if(boss.hp <= 0)
+//             boss.stat ="dead"
+//         console.log(boss)
+//         console.table(Hero.heros)
+
+//         i++
+//     }
+//     i = 0
+
+
+
+//     Hero.stat = ""
+//     if(boss.hp <= 0)
+//         boss.stat ="dead"
+//     console.log(boss)
+//     console.table(Hero.heros)
+
+// }
+
+
+
+// if the boss is alive and at least one hero is alive 
+while(boss.status == "alive" && Hero.heros.some(e => e.status == "alive"))
 {
     i = 0
-    while(i <Hero.heros.length)
+    console.log("===========")
+    while(i < Hero.heros.length)    
     {
-        Hero.heros[i].attack(boss);
-        i++;
+        console.log(Hero.heros[i].name +" the "+Hero.heros[i].type + " :" + Hero.heros[i].hp + " hp")
+        i++
     }
-} //else each hero defend
-else if(Hero.stat == "defense")
-{
+    console.log(boss.name +" the boss :" + boss.hp + " hp")
+    console.log("===========")
     i = 0
-    while(i <Hero.heros.length)
+    /* if the indexed hero is alive and his fight status is 
+     "" we get the his fight stat */
+    while(i < Hero.heros.length )
     {
-        Hero.heros[i].defense();
-        i++;
+        if(Hero.heros[i].status == "alive")
+        {
+            while(i < Hero.heros.length && !(Hero.heros[i].stat == "attack" || Hero.heros[i].stat == "defense" || Hero.heros[i].stat == "normal"))
+            {
+                // choose the stat of the hero (attack,defense,nomal)
+                console.log("You are facing  " +boss.name+ " the boss :\n")
+                console.log(Hero.heros[i].name+" The "+Hero.heros[i].type +" turn");
+
+                let stat = prompt("type A for Attack \ntype D for Defense\n type N for Nothing")
+                if (stat == "a" || stat == "A" || stat == "attack" || stat == "Attack")
+                    Hero.heros[i].stat = "attack"
+                if (stat == "d" || stat == "D" || stat == "defense" || stat == "Defense")
+                    Hero.heros[i].stat = "defense"
+                if (stat == "N" || stat == "n" || stat == "Normal" || stat == "normal")
+                    Hero.heros[i].stat = "normal"
+                console.table(Hero.heros[i].stat)
+            }
+
+            // depending on the hero.stat do an action 
+            switch (Hero.heros[i].stat)
+            {
+                case "attack":
+                    Hero.heros[i].attack(boss);    
+                    break;
+
+                case "defense":
+                    Hero.heros[i].defense();                
+                    break;
+
+                default:
+                    console.log(Hero.heros[i].name + " did nothing")
+                    break;
+            }
+        }
+        Hero.heros[i].stat = ""
+        i++
     }
+
+    // if boss hp is <= 0 he is dead and end the game
+    if(boss.hp <= 0)
+    {
+        console.log(boss.name + " is dead")
+        boss.status = "dead"
+        break
+    }
+
+    /* check id the boss hp is 20% or lower 
+    if yes lunch the riddle , if the user anwsers correctly
+    boss dies else the all heroes die*/
+    if(boss.hp <= boss.maxhp * 0.2 )
+    {
+        if(boss.bossReddilActive())
+        {
+            console.log("you solved the riddle .\n"+boss.name+" is dead")
+            boss.status = "dead"
+            break
+        }
+        else
+        {
+            console.log("you failed the riddle .\nall heroes die")
+            let j = 1
+            while(j < Hero.heros.length)
+                {
+                    Hero.heros[j].status = "dead"
+                    j++
+                }
+                console.table(Hero.heros)
+            break
+        }
+    }
+    // boss attacks random player 
+    boss.bossAttack(Hero.heros)
+
+
+
 }
+if(boss.status == "dead")
+    console.log("Congratulations you defeated the boss\nyou win")
+else
+    console.log("You lose")
 
-// boss turn 
-
-boss.bossAttack(Hero.heros)
-
-Hero.stat = ""
-if(boss.hp <= 0)
-    boss.stat ="dead"
-console.log(boss)
-console.table(Hero.heros)
-
-}
+console.log("Game Over");
